@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sistem Terinfeksi!</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #ff0000;
+            font-family: 'Courier New', monospace;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .warn-box {
+            border: 5px solid #ff0000;
+            padding: 20px;
+            background: rgba(50, 0, 0, 0.9);
+            text-align: center;
+            animation: blink 0.5s infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0.5; }
+        }
+
+        #progress-bar {
+            width: 80%;
+            height: 20px;
+            border: 1px solid #ff0000;
+            margin-top: 20px;
+        }
+
+        #fill {
+            height: 100%;
+            background: #ff0000;
+            width: 0%;
+        }
+
+        .status-text { font-size: 12px; margin-top: 10px; color: #fff; }
+    </style>
+</head>
+<body onclick="startPanic()">
+
+    <div class="warn-box">
+        <h1>⚠️ PERINGATAN KRITIS ⚠️</h1>
+        <p>SISTEM TELAH DI-HACK OLEH REMOTE_USER_77</p>
+        <div id="progress-bar"><div id="fill"></div></div>
+        <p class="status-text" id="status">MENGHAPUS FOTO DAN KONTAK: 0%</p>
+    </div>
+
+    <p style="margin-top: 50px; color: #444;">Klik layar untuk membatalkan...</p>
+
+    <audio id="alarm" loop>
+        <source src="https://www.soundjay.com/buttons/beep-01a.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        function startPanic() {
+            // 1. Fullscreen otomatis (Bikin bingung cari jalan keluar)
+            let elem = document.documentElement;
+            if (elem.requestFullscreen) { elem.requestFullscreen(); }
+
+            // 2. Mainkan Suara & Getar
+            document.getElementById('alarm').play();
+            if (navigator.vibrate) {
+                navigator.vibrate([200, 100, 200, 100, 500, 100, 800]);
+            }
+
+            // 3. Progres Palsu
+            let width = 0;
+            let fill = document.getElementById('fill');
+            let status = document.getElementById('status');
+            
+            let interval = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(interval);
+                    status.innerHTML = "DATA BERHASIL TERHAPUS!";
+                    alert("TERIMA KASIH ATAS DATA ANDA.");
+                } else {
+                    width++;
+                    fill.style.width = width + '%';
+                    status.innerHTML = "MENGHAPUS SEMUA DATA: " + width + "%";
+                }
+            }, 100);
+
+            // 4. Jebakan Tombol Back
+            history.pushState(null, null, location.href);
+            window.onpopstate = function() {
+                history.go(1);
+                alert("SISTEM TERKUNCI! Tombol navigasi dinonaktifkan.");
+                navigator.vibrate(1000);
+            };
+        }
+
+        // Mencegah klik kanan
+        document.oncontextmenu = () => false;
+    </script>
+</body>
+</html>
